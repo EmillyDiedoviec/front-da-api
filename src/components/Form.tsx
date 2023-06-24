@@ -8,7 +8,7 @@ import Alerts from './Alerts';
 
 interface FormProps {
     textButton: string;
-    mode: 'login' | 'create'
+    mode: 'login' | 'create';
 }
 
 const Form: React.FC<FormProps> = ({ textButton, mode }) => {
@@ -19,8 +19,6 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
     const [errorPassword, setErrorPassword] = useState(false);
     const [errorRepassword, setErrorRepassword] = useState(false);
     const [disabled, setDisabled] = useState(false);
-    const user = useAppSelector(state => state.users.user);
-
 
     /*     const users = useAppSelector(selectAllUsers); */
     const dispatch = useAppDispatch();
@@ -32,20 +30,20 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
 
     useEffect(() => {
         if (mode === 'create') {
-            const emailValid = (email.includes('.com') || email.includes('.com.br') && email.includes('@'));
+            const emailValid = email.includes('.com') || (email.includes('.com.br') && email.includes('@'));
             // TODO fazer verificação de email com maiscula e miniscula
 
-            if(email.length > 0){
+            if (email.length > 0) {
                 setErrorEmail(!emailValid);
             }
 
-            const passwordValid = password.length >= 6; 
-            if(password.length > 0){
+            const passwordValid = password.length >= 6;
+            if (password.length > 0) {
                 setErrorPassword(!passwordValid);
             }
 
             const repasswordValid = password === repassword;
-            if(repassword.length > 0) {
+            if (repassword.length > 0) {
                 setErrorRepassword(!repasswordValid);
             }
 
@@ -61,12 +59,15 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
         evento.preventDefault();
 
         if (mode === 'login') {
+            const user = {
+                email: email,
+                password: password
+            };
 
             dispatch(loginAsyncThunk(user));
             navigate('/notes');
-
         } else {
-            dispatch(userCreateAsyncThunk({email, password, repassword}));
+            dispatch(userCreateAsyncThunk({ email, password, repassword }));
 
             setTimeout(() => {
                 navigate('/login');
@@ -75,8 +76,7 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
     }
 
     return (
-        <Box component='form' marginTop={2} width='100%' height='100%' onSubmit={(ev) => handleSubmit(ev)}>
-
+        <Box component="form" marginTop={2} width="100%" height="100%" onSubmit={ev => handleSubmit(ev)}>
             <TextField
                 error={errorEmail}
                 helperText={errorEmail ? 'E-mail inválido' : ''}
@@ -87,17 +87,13 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
                 id="email"
                 label="E-mail"
                 fullWidth
-                onChange={(ev) => setEmail(ev.target.value)}
-                sx={{my: '5px'}}
+                onChange={ev => setEmail(ev.target.value)}
+                sx={{ my: '5px' }}
             />
 
-            <TextField 
+            <TextField
                 error={errorPassword}
-                helperText={
-                    errorPassword
-                        ? 'Senha deve conter ao menos 6 caracteres'
-                        : ''
-                }
+                helperText={errorPassword ? 'Senha deve conter ao menos 6 caracteres' : ''}
                 value={password}
                 variant="outlined"
                 type="password"
@@ -105,16 +101,14 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
                 id="password"
                 label="Senha"
                 fullWidth
-                onChange={(ev) => setPassword(ev.target.value)}
-                sx={{my: '5px'}}
+                onChange={ev => setPassword(ev.target.value)}
+                sx={{ my: '5px' }}
             />
 
             {mode === 'create' && (
-                <TextField 
+                <TextField
                     error={errorRepassword}
-                    helperText={
-                        errorRepassword ? 'As senhas não coincidem' : ''
-                    }
+                    helperText={errorRepassword ? 'As senhas não coincidem' : ''}
                     value={repassword}
                     margin="normal"
                     variant="outlined"
@@ -123,16 +117,16 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
                     id="repassword"
                     label="Repetir Senha"
                     fullWidth
-                    onChange={(ev) => setRepassword(ev.target.value)}
-                    sx={{my: '5px'}}
+                    onChange={ev => setRepassword(ev.target.value)}
+                    sx={{ my: '5px' }}
                 />
             )}
 
             <Grid container justifyContent="center">
-                <Grid item xs={12} textAlign='center'>
-                    <Button 
-                        type='submit' 
-                        variant='contained'
+                <Grid item xs={12} textAlign="center">
+                    <Button
+                        type="submit"
+                        variant="contained"
                         disabled={disabled}
                         sx={{
                             my: 3,
@@ -145,9 +139,10 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
                             boxShadow: 'none',
                             '&:hover': {
                                 backgroundColor: '#92cb6c',
-                                boxShadow: 'none',
+                                boxShadow: 'none'
                             }
-                        }}>
+                        }}
+                    >
                         {textButton}
                     </Button>
                 </Grid>
@@ -168,18 +163,32 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
                     )}
                 </Grid>
             </Grid>
-            <Box sx={{position: 'absolute', top: '10px', right: '10px'}}>
+            <Box sx={{ position: 'absolute', top: '10px', right: '10px' }}>
                 {alertSucess && (
-                    <Alerts onClose={() => setAlertSucess(false)} text='Conta criada com sucesso!' title='Sucesso!!!' type='success' />
+                    <Alerts
+                        onClose={() => setAlertSucess(false)}
+                        text="Conta criada com sucesso!"
+                        title="Sucesso!!!"
+                        type="success"
+                    />
                 )}
 
                 {alertError && (
-                    <Alerts onClose={() => setAlertError(false)} text='E-mail ou senha incorretos!' title='!ERRO!' type='error' />
-
+                    <Alerts
+                        onClose={() => setAlertError(false)}
+                        text="E-mail ou senha incorretos!"
+                        title="!ERRO!"
+                        type="error"
+                    />
                 )}
 
                 {alertErrorExist && (
-                    <Alerts onClose={() => setAlertErrorExist(false)} text='E-mail já cadastrado!' title='!ERRO!' type='error' />
+                    <Alerts
+                        onClose={() => setAlertErrorExist(false)}
+                        text="E-mail já cadastrado!"
+                        title="!ERRO!"
+                        type="error"
+                    />
                 )}
             </Box>
         </Box>

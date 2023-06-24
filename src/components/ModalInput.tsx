@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import Dialog from '@mui/material/Dialog';
@@ -8,8 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { Box } from '@mui/system';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import NoteType from '../types/NoteType';
-import { noteCreateAsyncThunk } from '../store/modules/NotesSlice';
-
+import { noteCreateAsyncThunk } from '../store/modules/UserSlice';
 
 interface ModalInputsProps {
     openModal: boolean;
@@ -17,15 +16,10 @@ interface ModalInputsProps {
     actionCancel: () => void;
 }
 
-
 const ModalInputs: React.FC<ModalInputsProps> = ({ openModal, actionCancel, actionConfirm }) => {
     const dispatch = useAppDispatch();
     const [note, setNote] = useState({} as NoteType);
     const email = useAppSelector(state => state.users.user.email);
-
-    /*     useEffect(() => {
-        dispatch(updateUser({ id: userLogged.email, changes: userLogged }));
-    }, [userLogged]); */
 
     const handleClose = () => {
         actionCancel();
@@ -36,24 +30,22 @@ const ModalInputs: React.FC<ModalInputsProps> = ({ openModal, actionCancel, acti
     };
 
     const handleConfirm = () => {
-        
-        const defaultNote: NoteType = {
+        setNote({
             id: '',
             title: '',
             description: '',
             archived: false
-        };
-        setNote(defaultNote);
-
-        const newNote = {
+        });
+        
+        const newTask = {
             title: note.title,
             description: note.description,
-            email: email
+            email
         };
 
-        dispatch(noteCreateAsyncThunk(newNote));
+        dispatch(noteCreateAsyncThunk(newTask));
         actionConfirm();
-        console.log(newNote);
+        console.log(newTask);
     };
 
     return (
@@ -69,7 +61,7 @@ const ModalInputs: React.FC<ModalInputsProps> = ({ openModal, actionCancel, acti
                         label="Titulo do recado"
                         type={'text'}
                         fullWidth
-                        name='title'
+                        name="title"
                         variant="standard"
                         onChange={handleChange}
                     />
@@ -80,21 +72,35 @@ const ModalInputs: React.FC<ModalInputsProps> = ({ openModal, actionCancel, acti
                         label="Descrição do recado"
                         type={'text'}
                         fullWidth
-                        name='description'
+                        name="description"
                         variant="standard"
                         onChange={handleChange}
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} sx={{ color: '#222', '&:hover': {
-                        backgroundColor: '#92cb6c',
-                        boxShadow: 'none',}}}>
-                            Cancelar
+                    <Button
+                        onClick={handleClose}
+                        sx={{
+                            color: '#222',
+                            '&:hover': {
+                                backgroundColor: '#92cb6c',
+                                boxShadow: 'none'
+                            }
+                        }}
+                    >
+                        Cancelar
                     </Button>
-                    <Button onClick={handleConfirm} sx={{ color: '#222', '&:hover': {
-                        backgroundColor: '#92cb6c',
-                        boxShadow: 'none',}}}>
-                            Confirmar
+                    <Button
+                        onClick={handleConfirm}
+                        sx={{
+                            color: '#222',
+                            '&:hover': {
+                                backgroundColor: '#92cb6c',
+                                boxShadow: 'none'
+                            }
+                        }}
+                    >
+                        Confirmar
                     </Button>
                 </DialogActions>
             </Dialog>

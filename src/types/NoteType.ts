@@ -1,5 +1,3 @@
-import { RandomUUIDOptions } from 'crypto';
-
 type NoteType = {
     id: string;
     title: string;

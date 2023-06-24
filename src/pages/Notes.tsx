@@ -1,6 +1,17 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
-import { Grid, Box, Typography, IconButton, Fab, Dialog, DialogTitle, DialogContent, DialogActions, Button } from '@mui/material';
+import {
+    Grid,
+    Box,
+    Typography,
+    IconButton,
+    Fab,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogActions,
+    Button
+} from '@mui/material';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
@@ -13,14 +24,13 @@ import ModalEdit from '../components/ModalEdit';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
 
-
 const Notes: React.FC = () => {
     const [openAdd, setOpenAdd] = useState(false);
     const [openModalEdit, setOpenModalEdit] = useState(false);
     const [noteEdit, setNoteEdit] = useState<NoteType>({} as NoteType);
     const [deleteConfirm, setDeleteConfirm] = useState(false);
     const [thisNote, setThisNote] = useState<NoteType | null>(null);
-
+    const listNotes = useAppSelector(state => state.users.user.notes);
 
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -76,7 +86,7 @@ const Notes: React.FC = () => {
         <Grid container sx={{ width: '100%', height: '100vh' }}>
             <Box width="100%" paddingTop="5rem" bgcolor="#65864f">
                 <Grid container width="100%">
-                    {/*                     {listNotes.map(note => (
+                    {listNotes.map(note => (
                         <Grid item xs={12} sm={6} md={3} key={note?.id} display="flex" justifyContent='center' flexDirection="row">
                             <Card
                                 sx={{
@@ -89,7 +99,7 @@ const Notes: React.FC = () => {
                             >
                                 <CardContent>
                                     <Typography gutterBottom variant="h5" component="div" sx={{ wordWrap: 'break-word' }}>
-                                        {note.note}
+                                        {note.title}
                                     </Typography>
 
                                     <Typography variant="body2" color="text.secondary" sx={{ wordWrap: 'break-word' }}>
@@ -110,9 +120,8 @@ const Notes: React.FC = () => {
                                 </CardActions>
                             </Card>
                         </Grid>
-                    ))} */}
+                    ))}
                 </Grid>
-
             </Box>
 
             <Fab
@@ -126,11 +135,10 @@ const Notes: React.FC = () => {
                     bgcolor: '#222',
                     width: '80px',
                     height: '80px',
-                    boxShadow:
-                    '5px 10px 20px rgba(0, 0, 0, 0.301), 5px 10px 20px rgba(0, 0, 0, 0.301);'
+                    boxShadow: '5px 10px 20px rgba(0, 0, 0, 0.301), 5px 10px 20px rgba(0, 0, 0, 0.301);'
                 }}
             >
-                { <AddIcon fontSize='large' /> }
+                {<AddIcon fontSize="large" />}
             </Fab>
             {openModalEdit && (
                 <ModalEdit
@@ -140,29 +148,32 @@ const Notes: React.FC = () => {
                     note={noteEdit}
                 />
             )}
-                    
-            <ModalInputs
-                openModal={openAdd}
-                actionConfirm={addNotes}
-                actionCancel={handleClose}
-            />
+
+            <ModalInputs openModal={openAdd} actionConfirm={addNotes} actionCancel={handleClose} />
 
             <Dialog open={deleteConfirm} onClose={handleDeleteCancel}>
                 <DialogTitle>Confirmar exclusão</DialogTitle>
                 <DialogContent>Deseja mesmo excluir o recado {thisNote?.title}?</DialogContent>
                 <DialogActions>
-                    <Button 
-                        onClick={handleDeleteCancel} 
-                        sx={{ color: '#222', '&:hover': {
-                            backgroundColor: '#92cb6c',
-                            boxShadow: 'none',}}}>
-                                Cancelar
+                    <Button
+                        onClick={handleDeleteCancel}
+                        sx={{
+                            color: '#222',
+                            '&:hover': {
+                                backgroundColor: '#92cb6c',
+                                boxShadow: 'none'
+                            }
+                        }}
+                    >
+                        Cancelar
                     </Button>
                     <Button /* onClick={handleDeleteConfirm}  */
-                        sx={{ color:'#cb1f1f', '&:hover': { color: '#000000',
-                            backgroundColor: '#cb1f1f',
-                            boxShadow: 'none',}}}>
-                                Excluir
+                        sx={{
+                            color: '#cb1f1f',
+                            '&:hover': { color: '#000000', backgroundColor: '#cb1f1f', boxShadow: 'none' }
+                        }}
+                    >
+                        Excluir
                     </Button>
                 </DialogActions>
             </Dialog>

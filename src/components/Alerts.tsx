@@ -10,7 +10,11 @@ interface AlertsProps {
 
 const Alerts: React.FC<AlertsProps> = ({ title, text, type, onClose }) => {
     return (
-        <Alert onClose={onClose} severity={type} sx={{width: '400px', height: '90px', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
+        <Alert
+            onClose={onClose}
+            severity={type}
+            sx={{ width: '400px', height: '90px', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        >
             <AlertTitle>{title}</AlertTitle>
             {text}
         </Alert>

@@ -30,13 +30,10 @@ const ResponsiveAppBar: React.FC = () => {
     };
 
     return (
-        <AppBar position="static" sx={{ backgroundColor: '#222122', position: 'fixed'}}>
+        <AppBar position="static" sx={{ backgroundColor: '#222122', position: 'fixed' }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-
-                    <Box sx={{ flexGrow: 1, display: 'flex' }}>
-                        RECADOS
-                    </Box>
+                    <Box sx={{ flexGrow: 1, display: 'flex' }}>RECADOS</Box>
 
                     <Typography
                         variant="body1"
@@ -46,7 +43,7 @@ const ResponsiveAppBar: React.FC = () => {
                             display: { xs: 'none', sm: 'flex', alignSelf: 'center' },
 
                             color: 'inherit',
-                            textDecoration: 'none',
+                            textDecoration: 'none'
                         }}
                     >
                         Bem vindo(a)
@@ -55,7 +52,10 @@ const ResponsiveAppBar: React.FC = () => {
                     <Box sx={{ flexGrow: 0 }}>
                         <Tooltip title="Open settings">
                             <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                                <Avatar sx={{ color: '#9dd07b', bgcolor: '#65864f' }} src="/static/images/avatar/2.jpg" />
+                                <Avatar
+                                    sx={{ color: '#9dd07b', bgcolor: '#65864f' }}
+                                    src="/static/images/avatar/2.jpg"
+                                />
                             </IconButton>
                         </Tooltip>
                         <Menu
@@ -64,17 +64,17 @@ const ResponsiveAppBar: React.FC = () => {
                             anchorEl={anchorElUser}
                             anchorOrigin={{
                                 vertical: 'top',
-                                horizontal: 'right',
+                                horizontal: 'right'
                             }}
                             keepMounted
                             transformOrigin={{
                                 vertical: 'top',
-                                horizontal: 'right',
+                                horizontal: 'right'
                             }}
                             open={Boolean(anchorElUser)}
                             onClose={handleClose}
                         >
-                            {settings.map((setting) => (
+                            {settings.map(setting => (
                                 <MenuItem key={setting}>
                                     <Typography onClick={handleCloseUserMenu} textAlign="center">
                                         {setting}

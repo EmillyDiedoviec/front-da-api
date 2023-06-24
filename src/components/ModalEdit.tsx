@@ -9,7 +9,6 @@ import { Box } from '@mui/system';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import NoteType from '../types/NoteType';
 
-
 interface ModalEditProps {
     openModal: boolean;
     actionConfirm: () => void;
@@ -19,7 +18,7 @@ interface ModalEditProps {
 
 const ModalEdit: React.FC<ModalEditProps> = ({ openModal, actionCancel, actionConfirm, note }) => {
     const dispatch = useAppDispatch();
-    const[noteEdit, setNoteEdit] = useState(note);
+    const [noteEdit, setNoteEdit] = useState(note);
 
     /*     useEffect(() => {
         dispatch(updateUser({ id: userLogged.email, changes: userLogged }));
@@ -48,7 +47,7 @@ const ModalEdit: React.FC<ModalEditProps> = ({ openModal, actionCancel, actionCo
                         type={'text'}
                         fullWidth
                         variant="standard"
-                        onChange={e => setNoteEdit(state => ({ ...state, note: e.target.value}))}
+                        onChange={e => setNoteEdit(state => ({ ...state, note: e.target.value }))}
                     />
                     <TextField
                         value={noteEdit.description}
@@ -58,19 +57,32 @@ const ModalEdit: React.FC<ModalEditProps> = ({ openModal, actionCancel, actionCo
                         type={'text'}
                         fullWidth
                         variant="standard"
-                        onChange={e => setNoteEdit(state => ({ ...state, description: e.target.value}))}
+                        onChange={e => setNoteEdit(state => ({ ...state, description: e.target.value }))}
                     />
                 </DialogContent>
                 <DialogActions>
-                    <Button onClick={handleClose} sx={{ color: '#222', '&:hover': {
-                        backgroundColor: '#92cb6c',
-                        boxShadow: 'none',}}}>
-                            Cancelar
+                    <Button
+                        onClick={handleClose}
+                        sx={{
+                            color: '#222',
+                            '&:hover': {
+                                backgroundColor: '#92cb6c',
+                                boxShadow: 'none'
+                            }
+                        }}
+                    >
+                        Cancelar
                     </Button>
-                    <Button /* onClick={handleConfirm} */ sx={{ color: '#222', '&:hover': {
-                        backgroundColor: '#92cb6c',
-                        boxShadow: 'none',}}}>
-                            Confirmar
+                    <Button
+                        /* onClick={handleConfirm} */ sx={{
+                            color: '#222',
+                            '&:hover': {
+                                backgroundColor: '#92cb6c',
+                                boxShadow: 'none'
+                            }
+                        }}
+                    >
+                        Confirmar
                     </Button>
                 </DialogActions>
             </Dialog>
