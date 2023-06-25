@@ -29,6 +29,7 @@ const ModalInputs: React.FC<ModalInputsProps> = ({ openModal, actionCancel, acti
         setNote(state => ({ ...state, [ev.target.name]: ev.target.value }));
     };
 
+
     const handleConfirm = () => {
         setNote({
             id: 0,
@@ -36,17 +37,24 @@ const ModalInputs: React.FC<ModalInputsProps> = ({ openModal, actionCancel, acti
             description: '',
             archived: false
         });
-        
+
         const newTask = {
             title: note.title,
             description: note.description,
             email
         };
 
-        dispatch(noteCreateAsyncThunk(newTask));
-        dispatch(getTaskAsyncThunk(newTask.email));
-        actionConfirm();
-        console.log(newTask);
+        dispatch(noteCreateAsyncThunk(newTask))
+            .then(() => {
+                // Recado criado com sucesso, faça qualquer ação adicional necessária
+                dispatch(getTaskAsyncThunk(email)); // Atualizar a lista de recados após a criação do novo recado
+                actionCancel(); // Fechar o modal após a criação do novo recado
+            })
+            .catch((error) => {
+                // Lidar com qualquer erro que ocorrer durante a criação do recado
+                console.error('Erro ao criar recado:', error);
+            });
+
     };
 
     return (

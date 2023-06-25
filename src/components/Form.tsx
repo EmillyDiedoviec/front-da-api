@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../store/hooks';
 import { useAppDispatch } from '../store/hooks';
-import { loginAsyncThunk, userCreateAsyncThunk } from '../store/modules/UserSlice';
+import { getTaskAsyncThunk, loginAsyncThunk, userCreateAsyncThunk } from '../store/modules/UserSlice';
 import Alerts from './Alerts';
 
 interface FormProps {
@@ -64,6 +64,7 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
                 password: password
             };
 
+            dispatch(getTaskAsyncThunk(email));
             dispatch(loginAsyncThunk(user));
             navigate('/notes');
         } else {

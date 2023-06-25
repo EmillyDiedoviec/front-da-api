@@ -82,7 +82,6 @@ export const userSlice = createSlice({
         builder.addCase(loginAsyncThunk.fulfilled, (state, action) => {
             state.user.email = action.payload.email;
             state.user.password = action.payload.password;
-            state.user.notes = [];
         });
         builder.addCase(noteCreateAsyncThunk.fulfilled, (state, action) => {
             state.user.notes.push(action.payload);
