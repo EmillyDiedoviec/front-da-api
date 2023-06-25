@@ -60,7 +60,6 @@ const ModalInputs: React.FC<ModalInputsProps> = ({ openModal, actionCancel, acti
                 // Lidar com qualquer erro que ocorrer durante a criação do recado
                 console.error('Erro ao criar recado:', error);
             });
-
     };
 
     return (

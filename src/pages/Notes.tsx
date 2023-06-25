@@ -1,5 +1,6 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
+import FolderIcon from '@mui/icons-material/Folder';
 import {
     Grid,
     Box,
@@ -23,7 +24,7 @@ import NoteType from '../types/NoteType';
 import ModalEdit from '../components/ModalEdit';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
-import { getTaskAsyncThunk, noteDeleteAsyncThunk } from '../store/modules/UserSlice';
+import { getTaskAsyncThunk, noteArchiveAsyncThunk, noteDeleteAsyncThunk } from '../store/modules/UserSlice';
 
 const Notes: React.FC = () => {
     const [openAdd, setOpenAdd] = useState(false);
@@ -88,6 +89,16 @@ const Notes: React.FC = () => {
         setOpenModalEdit(false);
     };
 
+    const taskarchive = (id: string) => {
+        const task = listNotes.find(item => item.id === id);
+        if (task) {
+            dispatch(noteArchiveAsyncThunk({ id: id, email: email }));
+            setTimeout(() => {
+                dispatch(getTaskAsyncThunk(email));
+            }, 200);
+        }
+    };
+
     return (
         <Grid container sx={{ width: '100%', height: '100vh' }}>
             <Box width="100%" paddingTop="5rem" bgcolor="#65864f">
@@ -122,6 +133,9 @@ const Notes: React.FC = () => {
                                         aria-label="delete"
                                         onClick={() => handleDelete(note)}>
                                         <DeleteIcon sx={{ color: '#e40101'}} />
+                                    </IconButton>
+                                    <IconButton size="small" onClick={() => taskarchive(note.id)}>
+                                        <FolderIcon />
                                     </IconButton>
                                 </CardActions>
                             </Card>

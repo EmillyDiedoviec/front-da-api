@@ -105,6 +105,15 @@ export const noteUpdateAsyncThunk = createAsyncThunk(
         return response.data;
     });
 
+export const noteArchiveAsyncThunk = createAsyncThunk(
+    'taskArchive',
+    async ({ email,id }: noteDelete) => {
+        console.log(id);
+        const response = await api.put(`/tasks/${email}/${id}/archived`);
+        console.log(response.data);
+        return response.data;
+    });
+
 export const userSlice = createSlice({
     name: 'User',
     initialState,
