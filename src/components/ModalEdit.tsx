@@ -8,6 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { Box } from '@mui/system';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import NoteType from '../types/NoteType';
+import { getTaskAsyncThunk, noteUpdateAsyncThunk } from '../store/modules/UserSlice';
 
 interface ModalEditProps {
     openModal: boolean;
@@ -19,6 +20,7 @@ interface ModalEditProps {
 const ModalEdit: React.FC<ModalEditProps> = ({ openModal, actionCancel, actionConfirm, note }) => {
     const dispatch = useAppDispatch();
     const [noteEdit, setNoteEdit] = useState(note);
+    const email = useAppSelector(state => state.users.user.email);
 
     /*     useEffect(() => {
         dispatch(updateUser({ id: userLogged.email, changes: userLogged }));
@@ -28,10 +30,20 @@ const ModalEdit: React.FC<ModalEditProps> = ({ openModal, actionCancel, actionCo
         actionCancel();
     };
 
-    /*     const handleConfirm = () => {
-        dispatch(updateTask(noteEdit));
+    const handleConfirm = () => {
+        const updateNote = {
+            id: noteEdit.id,
+            email: email,
+            title: noteEdit.title,
+            description: noteEdit.description
+        };
+
+        dispatch(noteUpdateAsyncThunk(updateNote));
+        setTimeout(() => {
+            dispatch(getTaskAsyncThunk(updateNote.email));
+        }, 200);
         actionConfirm();
-    }; */
+    };
 
     return (
         <Box>
@@ -47,7 +59,7 @@ const ModalEdit: React.FC<ModalEditProps> = ({ openModal, actionCancel, actionCo
                         type={'text'}
                         fullWidth
                         variant="standard"
-                        onChange={e => setNoteEdit(state => ({ ...state, note: e.target.value }))}
+                        onChange={e => setNoteEdit(state => ({ ...state, title: e.target.value }))}
                     />
                     <TextField
                         value={noteEdit.description}
@@ -74,7 +86,7 @@ const ModalEdit: React.FC<ModalEditProps> = ({ openModal, actionCancel, actionCo
                         Cancelar
                     </Button>
                     <Button
-                        /* onClick={handleConfirm} */ sx={{
+                        onClick={handleConfirm} sx={{
                             color: '#222',
                             '&:hover': {
                                 backgroundColor: '#92cb6c',

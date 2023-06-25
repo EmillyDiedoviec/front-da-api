@@ -22,6 +22,12 @@ const ModalInputs: React.FC<ModalInputsProps> = ({ openModal, actionCancel, acti
     const email = useAppSelector(state => state.users.user.email);
 
     const handleClose = () => {
+        setNote({
+            id: '',
+            title: '',
+            description: '',
+            archived: false
+        });
         actionCancel();
     };
 
@@ -32,7 +38,7 @@ const ModalInputs: React.FC<ModalInputsProps> = ({ openModal, actionCancel, acti
 
     const handleConfirm = () => {
         setNote({
-            id: 0,
+            id: '',
             title: '',
             description: '',
             archived: false

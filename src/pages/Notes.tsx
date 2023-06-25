@@ -23,14 +23,16 @@ import NoteType from '../types/NoteType';
 import ModalEdit from '../components/ModalEdit';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
+import { getTaskAsyncThunk, noteDeleteAsyncThunk } from '../store/modules/UserSlice';
 
 const Notes: React.FC = () => {
     const [openAdd, setOpenAdd] = useState(false);
     const [openModalEdit, setOpenModalEdit] = useState(false);
     const [noteEdit, setNoteEdit] = useState<NoteType>({} as NoteType);
     const [deleteConfirm, setDeleteConfirm] = useState(false);
-    const [thisNote, setThisNote] = useState<NoteType | null>(null);
+    const [thisNote, setThisNote] = useState<NoteType>({} as NoteType);
     const listNotes = useAppSelector(state => state.users.user.notes);
+    const email = useAppSelector(state => state.users.user.email);
 
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -56,16 +58,20 @@ const Notes: React.FC = () => {
         setDeleteConfirm(true);
     };
 
-    /*     const handleDeleteConfirm = () => {
-        if (thisNote) {
-            dispatch(deleteTask(thisNote.id));
-            setDeleteConfirm(false);
-            setThisNote(null);
-        }
-    }; */
+    const handleDeleteConfirm = () => {
+        const deleteNote = {
+            id: thisNote?.id,
+            email
+        };
+
+        dispatch(noteDeleteAsyncThunk(deleteNote));
+        setTimeout(() => {
+            dispatch(getTaskAsyncThunk(deleteNote.email));
+        }, 500);
+        setDeleteConfirm(false);
+    };
 
     const handleDeleteCancel = () => {
-        setThisNote(null);
         setDeleteConfirm(false);
     };
 
@@ -167,7 +173,7 @@ const Notes: React.FC = () => {
                     >
                         Cancelar
                     </Button>
-                    <Button /* onClick={handleDeleteConfirm}  */
+                    <Button onClick={handleDeleteConfirm} 
                         sx={{
                             color: '#cb1f1f',
                             '&:hover': { color: '#000000', backgroundColor: '#cb1f1f', boxShadow: 'none' }

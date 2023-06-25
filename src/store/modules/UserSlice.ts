@@ -26,6 +26,19 @@ interface noteCreate {
     email: string;
 }
 
+interface noteDelete {
+    email: string,
+    id: string,
+}
+
+interface noteUpdate {
+    id:string,
+    email: string,
+    title: string,
+    description: string
+}
+
+
 export const userCreateAsyncThunk = createAsyncThunk(
     'userCreate',
     async ({ email, password, repassword }: userCreate) => {
@@ -46,8 +59,6 @@ export const loginAsyncThunk = createAsyncThunk('login', async ({ email, passwor
     console.log(response);
     return response.data;
 });
-
-
 
 export const noteCreateAsyncThunk = createAsyncThunk('note', async (newTask: noteCreate) => {
     const email = newTask.email;
@@ -74,6 +85,25 @@ export const getTaskAsyncThunk = createAsyncThunk(
         const response = await api.get(`/tasks/${email}`);
         return response.data;
     }); 
+
+export const noteDeleteAsyncThunk = createAsyncThunk(
+    'taskDelete',
+    async ({ email,id }: noteDelete) => {
+        console.log(id);
+        const response = await api.delete(`/tasks/${email}/${id}`);
+        return response.data;
+    });
+
+export const noteUpdateAsyncThunk = createAsyncThunk(
+    'taskUpdate',
+    async ({ email,id,description,title }: noteUpdate) => {
+        console.log(id);
+        const response = await api.put(`/tasks/${email}/${id}`,{
+            title,
+            description
+        });
+        return response.data;
+    });
 
 export const userSlice = createSlice({
     name: 'User',
