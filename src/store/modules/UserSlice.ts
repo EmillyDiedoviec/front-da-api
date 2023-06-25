@@ -26,15 +26,6 @@ interface noteCreate {
     email: string;
 }
 
-export const loginAsyncThunk = createAsyncThunk('login', async ({ email, password }: userLogin) => {
-    const response = await api.post('/login', {
-        email,
-        password
-    });
-    console.log(response);
-    return response.data;
-});
-
 export const userCreateAsyncThunk = createAsyncThunk(
     'userCreate',
     async ({ email, password, repassword }: userCreate) => {
@@ -49,6 +40,15 @@ export const userCreateAsyncThunk = createAsyncThunk(
     }
 );
 
+export const loginAsyncThunk = createAsyncThunk('login', async ({ email, password }: userLogin) => {
+    const response = await api.get(`users/login/${email}/${password}`, {
+    });
+    console.log(response);
+    return response.data;
+});
+
+
+
 export const noteCreateAsyncThunk = createAsyncThunk('note', async (newTask: noteCreate) => {
     const email = newTask.email;
     console.log(newTask);
@@ -58,7 +58,7 @@ export const noteCreateAsyncThunk = createAsyncThunk('note', async (newTask: not
             title: newTask.title,
             description: newTask.description
         });
-        console.log(response);
+        
 
         return response.data;
     } catch (error) {
@@ -67,6 +67,14 @@ export const noteCreateAsyncThunk = createAsyncThunk('note', async (newTask: not
     }
 });
 
+export const getTaskAsyncThunk = createAsyncThunk(
+    'getTask',
+    async (email: string) => {
+        console.log(email);
+        const response = await api.get(`/tasks/${email}`);
+        return response.data;
+    }); 
+
 export const userSlice = createSlice({
     name: 'User',
     initialState,
@@ -74,9 +82,13 @@ export const userSlice = createSlice({
         builder.addCase(loginAsyncThunk.fulfilled, (state, action) => {
             state.user.email = action.payload.email;
             state.user.password = action.payload.password;
+            state.user.notes = [];
         });
         builder.addCase(noteCreateAsyncThunk.fulfilled, (state, action) => {
             state.user.notes.push(action.payload);
+        });
+        builder.addCase(getTaskAsyncThunk.fulfilled, (state, action) =>{
+            state.user.notes = action.payload;
         });
     },
     reducers: {

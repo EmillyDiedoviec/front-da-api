@@ -1,5 +1,5 @@
 type NoteType = {
-    id: string;
+    id: number;
     title: string;
     description: string;
     archived: boolean;

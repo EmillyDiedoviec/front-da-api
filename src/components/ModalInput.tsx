@@ -8,7 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { Box } from '@mui/system';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import NoteType from '../types/NoteType';
-import { noteCreateAsyncThunk } from '../store/modules/UserSlice';
+import { getTaskAsyncThunk, noteCreateAsyncThunk } from '../store/modules/UserSlice';
 
 interface ModalInputsProps {
     openModal: boolean;
@@ -31,7 +31,7 @@ const ModalInputs: React.FC<ModalInputsProps> = ({ openModal, actionCancel, acti
 
     const handleConfirm = () => {
         setNote({
-            id: '',
+            id: 0,
             title: '',
             description: '',
             archived: false
@@ -44,6 +44,7 @@ const ModalInputs: React.FC<ModalInputsProps> = ({ openModal, actionCancel, acti
         };
 
         dispatch(noteCreateAsyncThunk(newTask));
+        dispatch(getTaskAsyncThunk(newTask.email));
         actionConfirm();
         console.log(newTask);
     };
