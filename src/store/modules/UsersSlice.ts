@@ -18,7 +18,7 @@ export const getUsersAsyncThunk = createAsyncThunk('getUsers', async () => {
 });
 
 export const usersSlice = createSlice({
-    name: 'users',
+    name: 'user',
     initialState,
     extraReducers(builder) {
         builder.addCase(getUsersAsyncThunk.fulfilled,(state, action) =>{

@@ -30,7 +30,6 @@ import ModalEdit from '../components/ModalEdit';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
 import { getNotesAsyncThunk, noteArchiveAsyncThunk, noteDeleteAsyncThunk } from '../store/modules/UserLogged';
-import { getUsersAsyncThunk } from '../store/modules/UsersSlice';
 
 const Notes: React.FC = () => {
     const [openAdd, setOpenAdd] = useState(false);
@@ -49,13 +48,9 @@ const Notes: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        dispatch(getNotesAsyncThunk(user.email));
-        dispatch(getUsersAsyncThunk());
-        setTimeout(() => {
-            if (!user.email && !user.password && !user) {
-                navigate('/login');
-            }
-        }, 1000);
+        if (!user.email) {
+            navigate('/login');
+        }
     }, []);
 
     const handleClose = () => {
@@ -129,7 +124,7 @@ const Notes: React.FC = () => {
                                 <Grid item xs={2} display='flex' justifyContent="flex-end" alignItems="center">
                                     <Box component="form" width="280px" marginX="10px">
                                         <TextField
-                                            label="Filtrar"
+                                            label="Pesquisar recado"
                                             sx={{'width': '280px',
                                                 ':hover': {
                                                     border: '#222122',
@@ -143,22 +138,12 @@ const Notes: React.FC = () => {
                                                 
                                             }}
                                             variant="filled"
-                                        />
-                                    </Box>
-                                    <Box width="100px" sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
-                                        <Button
-                                            sx={{
-                                                height: '55px',
-                                                backgroundColor: '#222122',
-                                                ':hover': {
-                                                    backgroundColor: '#222122',
-                                                }
+                                            onChange={e => setFilterTask(e.target.value)}
+                                            value={filterTask}
+                                            InputLabelProps={{
+                                                style: { color: 'black' }
                                             }}
-                                            type="submit"
-                                            variant="contained"
-                                        >
-                                    Filtrar
-                                        </Button>
+                                        />
                                     </Box>
                                 </Grid>
                                 <Grid container width="100%">
@@ -199,24 +184,19 @@ const Notes: React.FC = () => {
                                                             onClick={() => handleDelete(note)}>
                                                             <DeleteIcon sx={{ color: '#e40101'}} />
                                                         </IconButton>
-                                                        <Checkbox
-                                                            icon={
-                                                                <FolderOffIcon
-                                                                    color="disabled"
-                                                                    sx={{ width: '25px', height: '25px' }}
-                                                                />
-                                                            }
-                                                            checkedIcon={
-                                                                <FolderIcon
-                                                                    sx={{
-                                                                        width: '25px',
-                                                                        height: '25px',
-                                                                        color: '#000000'
-                                                                    }}
-                                                                />
-                                                            }
-                                                            onClick={() => noteArchived(note.id)}
-                                                        />
+                                                        <ListItemAvatar>
+                                                            <IconButton onClick={() => noteArchived(note.id)}>
+                                                                {note.archived ? (
+                                                                    <>
+                                                                        <FolderIcon sx={{color: 'black'}} />
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <FolderOffIcon sx={{color: 'gray'}}/>
+                                                                    </>
+                                                                )}
+                                                            </IconButton>
+                                                        </ListItemAvatar>
                                                     </CardActions>
                                                 </Card>
                                             </Grid>
