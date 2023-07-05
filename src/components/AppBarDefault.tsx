@@ -11,7 +11,7 @@ import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { logout } from '../store/modules/UserSlice';
+import { logout } from '../store/modules/UserLogged';
 
 const settings = ['Logout'];
 
@@ -37,7 +37,7 @@ const ResponsiveAppBar: React.FC = () => {
         <AppBar position="static" sx={{ backgroundColor: '#222122', position: 'fixed' }}>
             <Container maxWidth="xl">
                 <Toolbar disableGutters>
-                    <Box sx={{ flexGrow: 1, display: 'flex' }}>RECADOS</Box>
+                    <Box sx={{ flexGrow: 1, display: 'flex' }}>MEUS RECADOS</Box>
 
                     <Typography
                         variant="body1"

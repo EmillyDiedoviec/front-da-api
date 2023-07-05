@@ -8,7 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { Box } from '@mui/system';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import NoteType from '../types/NoteType';
-import { getTaskAsyncThunk, noteCreateAsyncThunk } from '../store/modules/UserSlice';
+import { getNotesAsyncThunk, noteCreateAsyncThunk } from '../store/modules/UserLogged';
 
 interface ModalInputsProps {
     openModal: boolean;
@@ -19,7 +19,7 @@ interface ModalInputsProps {
 const ModalInputs: React.FC<ModalInputsProps> = ({ openModal, actionCancel, actionConfirm }) => {
     const dispatch = useAppDispatch();
     const [note, setNote] = useState({} as NoteType);
-    const email = useAppSelector(state => state.users.user.email);
+    const email = useAppSelector(state => state.userLogged.userLogged.email);
 
     const handleClose = () => {
         setNote({
@@ -50,16 +50,9 @@ const ModalInputs: React.FC<ModalInputsProps> = ({ openModal, actionCancel, acti
             email
         };
 
-        dispatch(noteCreateAsyncThunk(newTask))
-            .then(() => {
-                // Recado criado com sucesso, faça qualquer ação adicional necessária
-                dispatch(getTaskAsyncThunk(email)); // Atualizar a lista de recados após a criação do novo recado
-                actionCancel(); // Fechar o modal após a criação do novo recado
-            })
-            .catch((error) => {
-                // Lidar com qualquer erro que ocorrer durante a criação do recado
-                console.error('Erro ao criar recado:', error);
-            });
+        dispatch(noteCreateAsyncThunk(newTask));
+        dispatch(getNotesAsyncThunk(email));
+        actionCancel();
     };
 
     return (

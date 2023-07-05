@@ -8,7 +8,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import { Box } from '@mui/system';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import NoteType from '../types/NoteType';
-import { getTaskAsyncThunk, noteUpdateAsyncThunk } from '../store/modules/UserSlice';
+import { getNotesAsyncThunk, noteUpdateAsyncThunk } from '../store/modules/UserLogged';
 
 interface ModalEditProps {
     openModal: boolean;
@@ -20,11 +20,7 @@ interface ModalEditProps {
 const ModalEdit: React.FC<ModalEditProps> = ({ openModal, actionCancel, actionConfirm, note }) => {
     const dispatch = useAppDispatch();
     const [noteEdit, setNoteEdit] = useState(note);
-    const email = useAppSelector(state => state.users.user.email);
-
-    /*     useEffect(() => {
-        dispatch(updateUser({ id: userLogged.email, changes: userLogged }));
-    }, [userLogged]); */
+    const email = useAppSelector(state => state.userLogged.userLogged.email);
 
     const handleClose = () => {
         actionCancel();
@@ -40,7 +36,7 @@ const ModalEdit: React.FC<ModalEditProps> = ({ openModal, actionCancel, actionCo
 
         dispatch(noteUpdateAsyncThunk(updateNote));
         setTimeout(() => {
-            dispatch(getTaskAsyncThunk(updateNote.email));
+            dispatch(getNotesAsyncThunk(updateNote.email));
         }, 200);
         actionConfirm();
     };

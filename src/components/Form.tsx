@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAppSelector } from '../store/hooks';
 import { useAppDispatch } from '../store/hooks';
-import { getTaskAsyncThunk, loginAsyncThunk, userCreateAsyncThunk } from '../store/modules/UserSlice';
 import Alerts from './Alerts';
+import { getNotesAsyncThunk, loginAsyncThunk, userCreateAsyncThunk } from '../store/modules/UserLogged';
 
 interface FormProps {
     textButton: string;
@@ -19,8 +19,7 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
     const [errorPassword, setErrorPassword] = useState(false);
     const [errorRepassword, setErrorRepassword] = useState(false);
     const [disabled, setDisabled] = useState(false);
-
-    /*     const users = useAppSelector(selectAllUsers); */
+    
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
@@ -51,10 +50,6 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
         }
     }, [email, password, repassword, mode]);
 
-    /*     useEffect(() => {
-        localStorage.setItem('listaUsuarios', JSON.stringify(users));
-    }, [users]); */
-
     function handleSubmit(evento: React.FormEvent<HTMLFormElement>) {
         evento.preventDefault();
 
@@ -64,15 +59,15 @@ const Form: React.FC<FormProps> = ({ textButton, mode }) => {
                 password: password
             };
 
-            dispatch(getTaskAsyncThunk(email));
             dispatch(loginAsyncThunk(user));
+            dispatch(getNotesAsyncThunk(email));
             navigate('/notes');
         } else {
             dispatch(userCreateAsyncThunk({ email, password, repassword }));
 
             setTimeout(() => {
                 navigate('/login');
-            }, 4000);
+            }, 1000);
         }
     }
 

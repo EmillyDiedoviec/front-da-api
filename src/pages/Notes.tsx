@@ -1,6 +1,7 @@
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import FolderIcon from '@mui/icons-material/Folder';
+import FolderOffIcon from '@mui/icons-material/FolderOff';
 import {
     Grid,
     Box,
@@ -11,7 +12,11 @@ import {
     DialogTitle,
     DialogContent,
     DialogActions,
-    Button
+    Button,
+    Container,
+    TextField,
+    Checkbox,
+    ListItemAvatar
 } from '@mui/material';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -19,12 +24,13 @@ import CardContent from '@mui/material/CardContent';
 import * as React from 'react';
 import ModalInputs from '../components/ModalInput';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import NoteType from '../types/NoteType';
 import ModalEdit from '../components/ModalEdit';
 import AddIcon from '@mui/icons-material/Add';
 import { useNavigate } from 'react-router-dom';
-import { getTaskAsyncThunk, noteArchiveAsyncThunk, noteDeleteAsyncThunk } from '../store/modules/UserSlice';
+import { getNotesAsyncThunk, noteArchiveAsyncThunk, noteDeleteAsyncThunk } from '../store/modules/UserLogged';
+import { getUsersAsyncThunk } from '../store/modules/UsersSlice';
 
 const Notes: React.FC = () => {
     const [openAdd, setOpenAdd] = useState(false);
@@ -32,17 +38,25 @@ const Notes: React.FC = () => {
     const [noteEdit, setNoteEdit] = useState<NoteType>({} as NoteType);
     const [deleteConfirm, setDeleteConfirm] = useState(false);
     const [thisNote, setThisNote] = useState<NoteType>({} as NoteType);
-    const listNotes = useAppSelector(state => state.users.user.notes);
-    const email = useAppSelector(state => state.users.user.email);
+    const listNotes = useAppSelector(state => state.userLogged.userLogged.notes);
+    const email = useAppSelector(state => state.userLogged.userLogged.email);
+    const archivedNotes = listNotes.filter(item => item.archived);
+    const [showArchived, setShowArchived] = useState(false);
+    const [filterTask, setFilterTask] = useState('');
+    const user = useAppSelector(state => state.userLogged.userLogged);
 
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    /*     React.useEffect(() => {
-        if (!userLogged) {
-            navigate('/login');
-        }
-    }, []); */
+    useEffect(() => {
+        dispatch(getNotesAsyncThunk(user.email));
+        dispatch(getUsersAsyncThunk());
+        setTimeout(() => {
+            if (!user.email && !user.password && !user) {
+                navigate('/login');
+            }
+        }, 1000);
+    }, []);
 
     const handleClose = () => {
         setOpenAdd(false);
@@ -67,7 +81,7 @@ const Notes: React.FC = () => {
 
         dispatch(noteDeleteAsyncThunk(deleteNote));
         setTimeout(() => {
-            dispatch(getTaskAsyncThunk(deleteNote.email));
+            dispatch(getNotesAsyncThunk(deleteNote.email));
         }, 500);
         setDeleteConfirm(false);
     };
@@ -89,61 +103,208 @@ const Notes: React.FC = () => {
         setOpenModalEdit(false);
     };
 
-    const taskarchive = (id: string) => {
-        const task = listNotes.find(item => item.id === id);
-        if (task) {
+    const noteArchived = (id: string) => {
+        if (archivedNotes) {
             dispatch(noteArchiveAsyncThunk({ id: id, email: email }));
             setTimeout(() => {
-                dispatch(getTaskAsyncThunk(email));
+                dispatch(getNotesAsyncThunk(email));
             }, 200);
         }
+    };
+
+    const handleShowArchivedChange = () => {
+        setShowArchived(!showArchived);
     };
 
     return (
         <Grid container sx={{ width: '100%', height: '100vh' }}>
             <Box width="100%" paddingTop="5rem" bgcolor="#65864f">
-                <Grid container width="100%">
-                    {listNotes.map(note => (
-                        <Grid item xs={12} sm={6} md={3} key={note?.id} display="flex" justifyContent='center' flexDirection="row">
-                            <Card
-                                sx={{
-                                    width: '310px',
-                                    height: '180px',
-                                    marginY: '25px',
-                                    marginX: '15px',
-                                    border: '8px double #65864f'
-                                }}
-                            >
-                                <CardContent>
-                                    <Typography gutterBottom variant="h5" component="div" sx={{ wordWrap: 'break-word' }}>
-                                        {note.title}
-                                    </Typography>
+                <Grid container marginBottom={10}>
+                    <Grid item xs={12}>
+                        <Container sx={{ marginTop: '20px' }}>
+                            <Grid container spacing={3}>
+                                <Grid item xs={10} display="flex" justifyContent='flex-start' alignItems="center">
+                                    <Typography variant='h4'>Todos os recados {/* TODO se estiver nos arquivados mudar para arquivados */} </Typography>
+                                </Grid>
+                                <Grid item xs={2} display='flex' justifyContent="flex-end" alignItems="center">
+                                    <Box component="form" width="280px" marginX="10px">
+                                        <TextField
+                                            label="Filtrar"
+                                            sx={{'width': '280px',
+                                                ':hover': {
+                                                    border: '#222122',
+                                                },
+                                                '& .MuiFilledInput-underline:after': {
+                                                    borderBottomColor: '#222122'
+                                                },
+                                                '& label.Mui-focused': {
+                                                    color: '#222122'
+                                                },
+                                                
+                                            }}
+                                            variant="filled"
+                                        />
+                                    </Box>
+                                    <Box width="100px" sx={{ display: 'flex', justifyContent: 'space-evenly' }}>
+                                        <Button
+                                            sx={{
+                                                height: '55px',
+                                                backgroundColor: '#222122',
+                                                ':hover': {
+                                                    backgroundColor: '#222122',
+                                                }
+                                            }}
+                                            type="submit"
+                                            variant="contained"
+                                        >
+                                    Filtrar
+                                        </Button>
+                                    </Box>
+                                </Grid>
+                                <Grid container width="100%">
+                                    {showArchived
+                                        ? archivedNotes.filter(note => {
+                                            if (filterTask) {
+                                                return note.title.includes(filterTask);
+                                            }
+                                            return true;
+                                        }).map(note => (
+                                            <Grid item xs={12} sm={6} md={3} key={note?.id} display="flex" justifyContent='center' flexDirection="row">
+                                                <Card
+                                                    sx={{
+                                                        width: '300px',
+                                                        height: '170px',
+                                                        marginY: '25px',
+                                                        marginX: '15px',
+                                                        border: '8px double #65864f'
+                                                    }}
+                                                >
+                                                    <CardContent>
+                                                        <Typography gutterBottom variant="h5" component="div" sx={{ wordWrap: 'break-word' }}>
+                                                            {note.title}
+                                                        </Typography>
+                                
+                                                        <Typography variant="body2" color="text.secondary" sx={{ wordWrap: 'break-word' }}>
+                                                            {note.description}
+                                                        </Typography>
+                                                    </CardContent>
+                                                    <CardActions sx={{ display: 'flex', marginTop: '-10px'}}>
+                                                        <IconButton 
+                                                            aria-label="edit"
+                                                            onClick={() => handleEdit(note)}>
+                                                            <EditIcon sx={{ color: '#424242'}} />
+                                                        </IconButton>
+                                                        <IconButton 
+                                                            aria-label="delete"
+                                                            onClick={() => handleDelete(note)}>
+                                                            <DeleteIcon sx={{ color: '#e40101'}} />
+                                                        </IconButton>
+                                                        <Checkbox
+                                                            icon={
+                                                                <FolderOffIcon
+                                                                    color="disabled"
+                                                                    sx={{ width: '25px', height: '25px' }}
+                                                                />
+                                                            }
+                                                            checkedIcon={
+                                                                <FolderIcon
+                                                                    sx={{
+                                                                        width: '25px',
+                                                                        height: '25px',
+                                                                        color: '#000000'
+                                                                    }}
+                                                                />
+                                                            }
+                                                            onClick={() => noteArchived(note.id)}
+                                                        />
+                                                    </CardActions>
+                                                </Card>
+                                            </Grid>
+                                        ))
+                                        :listNotes.filter(note => {
+                                            if (filterTask) {
+                                                return note.title.includes(filterTask);
+                                            }
+                                            return true;
+                                        }).map(note => (
+                                            <Grid item xs={12} sm={6} md={3} key={note?.id} display="flex" justifyContent='center' flexDirection="row">
+                                                <Card
+                                                    sx={{
+                                                        width: '300px',
+                                                        height: '170px',
+                                                        marginY: '25px',
+                                                        marginX: '15px',
+                                                        border: '8px double #65864f'
+                                                    }}
+                                                >
+                                                    <CardContent>
+                                                        <Typography gutterBottom variant="h5" component="div" sx={{ wordWrap: 'break-word' }}>
+                                                            {note.title}
+                                                        </Typography>
+                            
+                                                        <Typography variant="body2" color="text.secondary" sx={{ wordWrap: 'break-word' }}>
+                                                            {note.description}
+                                                        </Typography>
+                                                    </CardContent>
+                                                    <CardActions sx={{ display: 'flex', marginTop: '-10px', justifyContent: 'space-between', width: '80px'}}>
+                                                        <IconButton 
+                                                            aria-label="edit"
+                                                            onClick={() => handleEdit(note)}>
+                                                            <EditIcon sx={{ color: '#424242'}} />
+                                                        </IconButton>
+                                                        <IconButton 
+                                                            aria-label="delete"
+                                                            onClick={() => handleDelete(note)}>
+                                                            <DeleteIcon sx={{ color: '#e40101'}} />
+                                                        </IconButton>
+                                                        <ListItemAvatar>
+                                                            <IconButton onClick={() => noteArchived(note.id)}>
+                                                                {note.archived ? (
+                                                                    <>
+                                                                        <FolderIcon sx={{color: 'black'}} />
+                                                                    </>
+                                                                ) : (
+                                                                    <>
+                                                                        <FolderOffIcon sx={{color: 'gray'}}/>
+                                                                    </>
+                                                                )}
+                                                            </IconButton>
+                                                        </ListItemAvatar>
 
-                                    <Typography variant="body2" color="text.secondary" sx={{ wordWrap: 'break-word' }}>
-                                        {note.description}
-                                    </Typography>
-                                </CardContent>
-                                <CardActions sx={{ display: 'flex', marginTop: '-10px'}}>
-                                    <IconButton 
-                                        aria-label="edit"
-                                        onClick={() => handleEdit(note)}>
-                                        <EditIcon sx={{ color: '#424242'}} />
-                                    </IconButton>
-                                    <IconButton 
-                                        aria-label="delete"
-                                        onClick={() => handleDelete(note)}>
-                                        <DeleteIcon sx={{ color: '#e40101'}} />
-                                    </IconButton>
-                                    <IconButton size="small" onClick={() => taskarchive(note.id)}>
-                                        <FolderIcon />
-                                    </IconButton>
-                                </CardActions>
-                            </Card>
-                        </Grid>
-                    ))}
+                                                    </CardActions>
+                                                </Card>
+                                            </Grid>
+                                        ))}
+                                
+                                </Grid>
+                            </Grid>
+                        </Container>
+                    </Grid>
                 </Grid>
+
             </Box>
 
+            <Grid item xs={12} display="flex" justifyContent="flex-end" sx={{
+                position: 'fixed',
+                right: '43px',
+                bottom: '70px',
+                width: '80px',
+                height: '80px',}}>
+                <Box>
+                    <Checkbox 
+                        icon={
+                            <FolderOffIcon 
+                                color='disabled' 
+                                sx={{'width': '35px', 'height': '35px'}}/>}
+
+                        checkedIcon={
+                            <FolderIcon 
+                                sx={{'width': '35px', 'height': '35px', 'color': '#2f4123'}}/>} 
+                        checked={showArchived}
+                        sx={{'width': '35px', 'height': '35px'}} 
+                        onClick={handleShowArchivedChange}/>
+                </Box>
+            </Grid>
             <Fab
                 onClick={openModalImput}
                 color="info"
@@ -155,7 +316,10 @@ const Notes: React.FC = () => {
                     bgcolor: '#222',
                     width: '80px',
                     height: '80px',
-                    boxShadow: '5px 10px 20px rgba(0, 0, 0, 0.301), 5px 10px 20px rgba(0, 0, 0, 0.301);'
+                    ':hover': {
+                        backgroundColor: '#141313',
+                    },
+                    boxShadow: '5px 10px 20px rgba(0, 0, 0, 0.301), 5px 10px 20px rgba(0, 0, 0, 0.301),'
                 }}
             >
                 {<AddIcon fontSize="large" />}

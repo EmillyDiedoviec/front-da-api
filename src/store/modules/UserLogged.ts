@@ -3,10 +3,10 @@ import UserType from '../../types/UserType';
 import api from '../../services/api';
 
 interface userstate {
-    user: UserType;
+    userLogged: UserType;
 }
 const initialState: userstate = {
-    user: { email: '', password: '', notes: [] }
+    userLogged: { email: '', password: '', notes: [] }
 };
 
 interface userLogin {
@@ -78,7 +78,7 @@ export const noteCreateAsyncThunk = createAsyncThunk('note', async (newTask: not
     }
 });
 
-export const getTaskAsyncThunk = createAsyncThunk(
+export const getNotesAsyncThunk = createAsyncThunk(
     'getTask',
     async (email: string) => {
         console.log(email);
@@ -114,19 +114,19 @@ export const noteArchiveAsyncThunk = createAsyncThunk(
         return response.data;
     });
 
-export const userSlice = createSlice({
-    name: 'User',
+export const userLoggedSlice = createSlice({
+    name: 'userLogged',
     initialState,
     extraReducers(builder) {
         builder.addCase(loginAsyncThunk.fulfilled, (state, action) => {
-            state.user.email = action.payload.email;
-            state.user.password = action.payload.password;
+            state.userLogged.email = action.payload.email;
+            state.userLogged.password = action.payload.password;
         });
         builder.addCase(noteCreateAsyncThunk.fulfilled, (state, action) => {
-            state.user.notes.push(action.payload);
+            state.userLogged.notes.push(action.payload);
         });
-        builder.addCase(getTaskAsyncThunk.fulfilled, (state, action) =>{
-            state.user.notes = action.payload;
+        builder.addCase(getNotesAsyncThunk.fulfilled, (state, action) =>{
+            state.userLogged.notes = action.payload;
         });
     },
     reducers: {
@@ -136,6 +136,6 @@ export const userSlice = createSlice({
     }
 });
 
-export default userSlice.reducer;
+export default userLoggedSlice.reducer;
 
-export const { logout } = userSlice.actions;
+export const { logout } = userLoggedSlice.actions;
